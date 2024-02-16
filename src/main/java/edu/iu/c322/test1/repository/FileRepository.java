@@ -13,7 +13,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Component
 public class FileRepository {
     private String IMAGES_FOLDER_PATH = "quizzes/questions/images/";
     private static final String NEW_LINE = System.lineSeparator();
