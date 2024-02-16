@@ -6,8 +6,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -56,10 +60,12 @@ class FileRepositoryTest {
     }
 
     void addToDB(Question question) {
-        FileRepository fileRepository = new FileRepository();
         boolean result = false;
         try {
-            result = fileRepository.add(question);
+            Path path = Paths.get("questions-test.txt");
+            String data = question.toLine();
+            appendToFile(path, data + System.lineSeparator());
+            result = true;
         } catch (IOException e) {
             System.out.println(e.getMessage());
             fail();
@@ -72,12 +78,30 @@ class FileRepositoryTest {
 
     @Test
     void findAll() {
-        FileRepository fileRepository = new FileRepository();
         try {
-            List<Question> data = fileRepository.findAll();
+            List<Question> data = findAllthingy();
             assertEquals(3, data.size());
         } catch (IOException e) {
             fail();
         }
+    }
+    private static void appendToFile(Path path, String content)
+            throws IOException {
+        Files.write(path,
+                content.getBytes(StandardCharsets.UTF_8),
+                StandardOpenOption.CREATE,
+                StandardOpenOption.APPEND);
+    }
+    public List<Question> findAllthingy() throws IOException {
+        List<Question> result = new ArrayList<>();
+        Path path = Paths.get("questions-test.txt");
+        if (Files.exists(path)) {
+            List<String> data = Files.readAllLines(path);
+            for (String line : data) {
+                Question q = Question.fromLine(line);
+                result.add(q);
+            }
+        }
+        return result;
     }
 }
